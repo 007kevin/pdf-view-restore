@@ -39,6 +39,36 @@
   :group 'pdf-view-restore
   :type 'string)
 
+(defun pdf-view-restore ()
+  "Restore page"
+  (when (eq major-mode 'pdf-view-mode)
+    ;; This buffer is in pdf-view-mode
+    (let ((link (pdf-view-restore-get-link)))
+      (org-pdfview-open link))))
+
+(defun pdf-view-restore-save ()
+  "Save restore information"
+  (when (eq major-mode 'pdf-view-mode)
+    ;; This buffer is in pdf-view-mode
+    (let* ((page (pdf-view-current-page))
+           (link (concat (file-relative-name buffer-file-name) "::" (number-to-string page))))
+      (pdf-view-restore-set-link link))))
+
+(defun pdf-view-restore-get-link ()
+  "Return restore link"
+  (let* ((alist (pdf-view-restore-unserialize))
+         (key (pdf-view-restore-key)))
+    (if alist (cdr (assoc key alist)) " ")))
+
+(defun pdf-view-restore-set-link (link)
+  "Save restore link"
+  (let* ((alist (pdf-view-restore-unserialize))
+         (key (pdf-view-restore-key)))
+    (setf (alist-get key alist) link)
+    (pdf-view-restore-serialize alist)))
+
+(defun pdf-view-restore-key () (file-name-base buffer-file-name))
+
 ;;; Serialization
 (defun pdf-view-restore-serialize (data)
   "Serialize DATA to `pdf-view-restore-filename'.
@@ -59,20 +89,6 @@ The saved data can be restored with `pdf-view-restore-unserialize'."
         ;; lisp data structures
         (read (buffer-string))))))
 
-(defun pdf-view-restore-save ()
-  "Save restore information"
-  (when (eq major-mode 'pdf-view-mode)
-    ;; This buffer is in pdf-view-mode
-    (let* ((page (pdf-view-current-page))
-           (link (concat (file-relative-name buffer-file-name) "::" (number-to-string page))))
-      (pdf-view-restore-serialize link))))
-
-(defun pdf-view-restore ()
-  "Restore page"
-  (when (eq major-mode 'pdf-view-mode)
-    ;; This buffer is in pdf-view-mode
-    (let ((link (pdf-view-restore-unserialize)))
-      (org-pdfview-open link))))
 
 (provide 'pdf-view-restore)
 ;;; pdf-view-restore.el ends here
