@@ -1,4 +1,4 @@
-;;; pdf-view-restore.el --- Support for reopening pdf to last position opened
+;;; pdf-view-restore.el --- Support for saving and opening last known pdf position in pdfview mode
 
 ;; Copyright (C) 2019 Kevin Kim
 
@@ -6,7 +6,7 @@
 ;; Maintainer: Kevin Kim <kevinkim1991@gmail.com>
 ;; Keywords: pdf-view, pdf-tools
 ;; Version: 0.1
-;; Package-Requires: ((pdf-tools "0.80"))
+;; Package-Requires: ((pdf-tools "0.90"))
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 ;; along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
-;; Support for saving and opening last known pdf position. Information
+;; Support for saving and opening last known pdf position in pdfview mode. Information
 ;; will be saved relative to the pdf being viewed so ensure
 ;; `pdf-view-restore-filename' is in the same directory as the viewing pdf.
 ;;
