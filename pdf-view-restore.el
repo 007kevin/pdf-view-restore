@@ -22,7 +22,9 @@
 ;; along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
-;; Add support to saving and reopening last known pdf position.
+;; Support for saving and opening last known pdf position. Information
+;; will be saved relative to the pdf being viewed so ensure
+;; `pdf-view-restore-filename' is in the same directory as the viewing pdf.
 ;;
 ;; To enable, add the following hooks:
 ;;   (add-hook 'kill-buffer-hook 'pdf-view-restore-save)
@@ -43,31 +45,27 @@
   "Restore page"
   (when (eq major-mode 'pdf-view-mode)
     ;; This buffer is in pdf-view-mode
-    (let ((link (pdf-view-restore-get-link)))
-      (if (string-match "\\(.*\\)::\\([0-9]+\\)$"  link)
-          (let* ((path (match-string 1 link))
-                 (page (string-to-number (match-string 2 link))))
-            (pdf-view-goto-page page))))))
+    (pdf-view-goto-page (pdf-view-restore-get-page))))
+
 
 (defun pdf-view-restore-save ()
   "Save restore information"
   (when (eq major-mode 'pdf-view-mode)
     ;; This buffer is in pdf-view-mode
-    (let* ((page (pdf-view-current-page))
-           (link (concat (file-relative-name buffer-file-name) "::" (number-to-string page))))
-      (pdf-view-restore-set-link link))))
+    (let ((page (pdf-view-current-page)))
+      (pdf-view-restore-set-page page))))
 
-(defun pdf-view-restore-get-link ()
-  "Return restore link"
+(defun pdf-view-restore-get-page ()
+  "Return restore page"
   (let* ((alist (pdf-view-restore-unserialize))
          (key (pdf-view-restore-key)))
-    (if alist (cdr (assoc key alist)) " ")))
+    (if alist (cdr (assoc key alist)) 0)))
 
-(defun pdf-view-restore-set-link (link)
-  "Save restore link"
+(defun pdf-view-restore-set-page (page)
+  "Save restore page"
   (let* ((alist (pdf-view-restore-unserialize))
          (key (pdf-view-restore-key)))
-    (pdf-view-restore-serialize (pdf-view-restore-alist-set key link alist))))
+    (pdf-view-restore-serialize (pdf-view-restore-alist-set key page alist))))
 
 (defun pdf-view-restore-alist-set (key val alist &optional symbol)
   "Set property KEY to VAL in ALIST. Return new alist.
