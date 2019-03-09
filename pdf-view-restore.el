@@ -4,9 +4,9 @@
 
 ;; Author: Kevin Kim <kevinkim1991@gmail.com>
 ;; Maintainer: Kevin Kim <kevinkim1991@gmail.com>
-;; Keywords: pdf-view, pdf-tools,
+;; Keywords: pdf-view, pdf-tools
 ;; Version: 0.1
-;; Package-Requires: ((pdf-tools "0.80") (org-pdfview "0.10"))
+;; Package-Requires: ((pdf-tools "0.80"))
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@
 
 ;;; Code:
 (require 'pdf-view)
-(require 'org-pdfview)
+(require 'subr-x) ;; For if-let macro
 
 (defcustom pdf-view-restore-filename ".pdf-view-restore"
   "Filename to save last known pdf position"
@@ -44,7 +44,10 @@
   (when (eq major-mode 'pdf-view-mode)
     ;; This buffer is in pdf-view-mode
     (let ((link (pdf-view-restore-get-link)))
-      (org-pdfview-open link))))
+      (if (string-match "\\(.*\\)::\\([0-9]+\\)$"  link)
+          (let* ((path (match-string 1 link))
+                 (page (string-to-number (match-string 2 link))))
+            (pdf-view-goto-page page))))))
 
 (defun pdf-view-restore-save ()
   "Save restore information"
@@ -64,8 +67,23 @@
   "Save restore link"
   (let* ((alist (pdf-view-restore-unserialize))
          (key (pdf-view-restore-key)))
-    (setf (alist-get key alist) link)
-    (pdf-view-restore-serialize alist)))
+    (pdf-view-restore-serialize (pdf-view-restore-alist-set key link alist))))
+
+(defun pdf-view-restore-alist-set (key val alist &optional symbol)
+  "Set property KEY to VAL in ALIST. Return new alist.
+This creates the association if it is missing, and otherwise sets
+the cdr of the first matching association in the list. It does
+not create duplicate associations. By default, key comparison is
+done with `equal'. However, if SYMBOL is non-nil, then `eq' is
+used instead.
+
+This method may mutate the original alist, but you still need to
+use the return value of this method instead of the original
+alist, to ensure correct results."
+  (if-let ((pair (if symbol (assq key alist) (assoc key alist))))
+      (setcdr pair val)
+    (push (cons key val) alist))
+  alist)
 
 (defun pdf-view-restore-key () (file-name-base buffer-file-name))
 
