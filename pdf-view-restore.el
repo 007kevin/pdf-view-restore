@@ -1,4 +1,4 @@
-;;; pdf-view-restore.el --- Support for opening last known pdf position in pdfview mode
+;;; pdf-view-restore.el --- Support for opening last known pdf position in pdfview mode -*- lexical-binding: t; -*-
 
 ;; Copyright (c) 2019 Kevin Kim <kevinkim1991@gmail.com>
 
