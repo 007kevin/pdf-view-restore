@@ -26,8 +26,8 @@
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
-;; Support for saving and opening last known pdf position in pdfview mode. Information
-;; will be saved relative to the pdf being viewed so ensure
+;; Support for saving and opening last known pdf position in pdfview mode.
+;; Information  will be saved relative to the pdf being viewed so ensure
 ;; `pdf-view-restore-filename' is in the same directory as the viewing pdf.
 ;;
 ;; To enable, add the following hooks:
@@ -46,7 +46,7 @@
 
 ;;;###autoload
 (defun pdf-view-restore ()
-  "Restore page"
+  "Restore page."
   (when (eq major-mode 'pdf-view-mode)
     ;; This buffer is in pdf-view-mode
     (let ((page (pdf-view-restore-get-page)))
@@ -54,36 +54,37 @@
 
 ;;;###autoload
 (defun pdf-view-restore-save ()
-  "Save restore information"
+  "Save restore information."
   (when (eq major-mode 'pdf-view-mode)
     ;; This buffer is in pdf-view-mode
     (let ((page (pdf-view-current-page)))
       (pdf-view-restore-set-page page))))
 
 (defun pdf-view-restore-get-page ()
-  "Return restore page"
+  "Return restore page."
   (let* ((alist (pdf-view-restore-unserialize))
          (key (pdf-view-restore-key))
          (val (cadr (assoc key alist))))
     val))
 
 (defun pdf-view-restore-set-page (page)
-  "Save restore page"
+  "Save restore PAGE."
   (let* ((alist (pdf-view-restore-unserialize))
          (key (pdf-view-restore-key)))
     (pdf-view-restore-serialize (pdf-view-restore-alist-set key page alist))))
 
 (defun pdf-view-restore-alist-set (key val alist)
-  "Set property KEY to VAL in ALIST. Return new alist."
+  "Set property KEY to VAL in ALIST.  Return new alist."
   (let ((alist (delq (assoc key alist) alist)))
     (add-to-list 'alist `(,key ,val))))
 
-(defun pdf-view-restore-key () (file-name-base buffer-file-name))
+(defun pdf-view-restore-key ()
+  "Key for storing data is based on filename."
+  (file-name-base buffer-file-name))
 
 ;;; Serialization
 (defun pdf-view-restore-serialize (data)
   "Serialize DATA to `pdf-view-restore-filename'.
-
 The saved data can be restored with `pdf-view-restore-unserialize'."
   (when (file-writable-p pdf-view-restore-filename)
     (with-temp-file pdf-view-restore-filename
