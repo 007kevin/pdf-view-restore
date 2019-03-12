@@ -30,9 +30,8 @@
 ;; Information  will be saved relative to the pdf being viewed so ensure
 ;; `pdf-view-restore-filename' is in the same directory as the viewing pdf.
 ;;
-;; To enable, add the following hooks:
-;;   (add-hook 'pdf-view-change-page-hook 'pdf-view-restore-save)
-;;   (add-hook 'pdf-view-mode-hook 'pdf-view-restore)
+;; To enable, add the following:
+;;   (pdf-view-restore-setup)
 
 ;;; Code:
 
@@ -44,12 +43,22 @@
   :type 'string)
 
 ;;;###autoload
+(defun pdf-view-restore-setup ()
+  (add-hook 'pdf-view-mode-hook
+            (lambda ()
+              (message "ran hooks")
+              (pdf-view-restore)
+              ;; Add saving hook after restore has been done
+              ;; (add-hook 'pdf-view-after-change-page-hook 'pdf-view-restore-save)
+              )))
+
+;;;###autoload
 (defun pdf-view-restore ()
   "Restore page."
   (when (eq major-mode 'pdf-view-mode)
-    ;; This buffer is in pdf-view-mode
-    (let ((page (pdf-view-restore-get-page)))
-      (if page (pdf-view-goto-page page)))))
+    ;; This buffer is in pdf-view-mode    
+  (let ((page (pdf-view-restore-get-page)))
+    (if page (pdf-view-goto-page page)))))
 
 ;;;###autoload
 (defun pdf-view-restore-save ()
