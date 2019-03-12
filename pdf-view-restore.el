@@ -31,8 +31,7 @@
 ;; `pdf-view-restore-filename' is in the same directory as the viewing pdf.
 ;;
 ;; To enable, add the following hooks:
-;;   (add-hook 'kill-buffer-hook 'pdf-view-restore-save)
-;;   (add-hook 'kill-emacs-hook 'pdf-view-restore-save)
+;;   (add-hook 'pdf-view-change-page-hook 'pdf-view-restore-save)
 ;;   (add-hook 'pdf-view-mode-hook 'pdf-view-restore)
 
 ;;; Code:
