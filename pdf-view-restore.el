@@ -6,7 +6,7 @@
 ;; URL: https://github.com/007kevin/pdf-view-restore
 ;; Keywords: files convenience
 ;; Version: 0.1
-;; Package-Requires: ((pdf-tools "0.90") (emacs "24.3"))
+;; Package-Requires: ((pdf-tools "0.90") (emacs "24.4"))
 
 ;; This file is NOT part of GNU Emacs.
 
@@ -44,23 +44,23 @@
 
 ;;;###autoload
 (defun pdf-view-restore-setup ()
-  (add-hook 'pdf-view-mode-hook
-            (lambda ()
-              (message "ran hooks")
-              (pdf-view-restore)
-              ;; Add saving hook after restore has been done
-              ;; (add-hook 'pdf-view-after-change-page-hook 'pdf-view-restore-save)
-              )))
+  "Setup the necessary hooks to automatically save and restore pages
+in pdf-view-mode. The before and after advice onto pdf-view-mode is there
+to prevent saving upon creating the pdf-view-mode buffer."
+  (let ((allow-save t))
+    (advice-add 'pdf-view-mode :before (lambda() (setq allow-save nil)))
+    (advice-add 'pdf-view-mode :after (lambda() (setq allow-save t)))
+    (add-hook 'pdf-view-mode-hook 'pdf-view-restore)
+    (add-hook 'pdf-view-after-change-page-hook
+              (lambda() (if allow-save (pdf-view-restore-save))))))
 
-;;;###autoload
 (defun pdf-view-restore ()
   "Restore page."
   (when (eq major-mode 'pdf-view-mode)
-    ;; This buffer is in pdf-view-mode    
+    ;; This buffer is in pdf-view-mode
   (let ((page (pdf-view-restore-get-page)))
     (if page (pdf-view-goto-page page)))))
 
-;;;###autoload
 (defun pdf-view-restore-save ()
   "Save restore information."
   (when (eq major-mode 'pdf-view-mode)
