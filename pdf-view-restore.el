@@ -31,7 +31,7 @@
 ;; `pdf-view-restore-filename' is in the same directory as the viewing pdf.
 ;;
 ;; To enable, add the following:
-;;   (pdf-view-restore-setup)
+;;   (add-hook 'pdf-view-mode-hook 'pdf-view-restore-mode)
 
 ;;; Code:
 
@@ -43,23 +43,20 @@
   :type 'string)
 
 ;;;###autoload
-(defun pdf-view-restore-setup ()
-  "Setup the necessary hooks to automatically save and restore pages
-in pdf-view-mode. The before and after advice onto pdf-view-mode is there
-to prevent saving upon creating the pdf-view-mode buffer."
-  (let ((allow-save t))
-    (advice-add 'pdf-view-mode :before (lambda() (setq allow-save nil)))
-    (advice-add 'pdf-view-mode :after (lambda() (setq allow-save t)))
-    (add-hook 'pdf-view-mode-hook 'pdf-view-restore)
-    (add-hook 'pdf-view-after-change-page-hook
-              (lambda() (if allow-save (pdf-view-restore-save))))))
+(define-minor-mode pdf-view-restore-mode
+  "Automatically restore last known pdf position"
+  :global nil
+  (if (not pdf-view-restore-mode)
+      (remove-hook 'pdf-view-after-change-page-hook 'pdf-view-restore-save)
+    (pdf-view-restore)
+    (add-hook 'pdf-view-after-change-page-hook 'pdf-view-restore-save)))
 
 (defun pdf-view-restore ()
   "Restore page."
   (when (eq major-mode 'pdf-view-mode)
     ;; This buffer is in pdf-view-mode
-  (let ((page (pdf-view-restore-get-page)))
-    (if page (pdf-view-goto-page page)))))
+    (let ((page (pdf-view-restore-get-page)))
+      (if page (pdf-view-goto-page page)))))
 
 (defun pdf-view-restore-save ()
   "Save restore information."
