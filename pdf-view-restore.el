@@ -56,13 +56,13 @@
   (when (eq major-mode 'pdf-view-mode)
     ;; This buffer is in pdf-view-mode
     (let ((page (pdf-view-restore-get-page)))
-      (if page (pdf-view-goto-page page)))))
+      (when page (pdf-view-goto-page page)))))
 
 (defun pdf-view-restore-save ()
   "Save restore information."
   (when (eq major-mode 'pdf-view-mode)
     ;; This buffer is in pdf-view-mode
-    (let ((page (pdf-view-current-page)))
+    (let ((page (pdf-view-current-page)))   
       (pdf-view-restore-set-page page))))
 
 (defun pdf-view-restore-get-page ()
@@ -74,14 +74,10 @@
 
 (defun pdf-view-restore-set-page (page)
   "Save restore PAGE."
-  (let* ((alist (pdf-view-restore-unserialize))
-         (key (pdf-view-restore-key)))
-    (pdf-view-restore-serialize (pdf-view-restore-alist-set key page alist))))
-
-(defun pdf-view-restore-alist-set (key val alist)
-  "Set property KEY to VAL in ALIST.  Return new alist."
-  (let ((alist (delq (assoc key alist) alist)))
-    (add-to-list 'alist `(,key ,val))))
+  (let ((alist (pdf-view-restore-unserialize))
+        (key (pdf-view-restore-key)))
+    (setf (alist-get key alist nil nil 'equal) page)
+    (pdf-view-restore-serialize alist)))
 
 (defun pdf-view-restore-key ()
   "Key for storing data is based on filename."
