@@ -6,7 +6,7 @@
 ;; URL: https://github.com/007kevin/pdf-view-restore
 ;; Keywords: files convenience
 ;; Version: 0.1
-;; Package-Requires: ((pdf-tools "0.90") (emacs "24.4"))
+;; Package-Requires: ((pdf-tools "0.90") (emacs "26.0"))
 
 ;; This file is NOT part of GNU Emacs.
 
@@ -39,7 +39,7 @@
 
 (defcustom pdf-view-restore-filename ".pdf-view-restore"
   "Filename to save the last known pdf position."
-  :group 'pdf-view-restore
+  :group 'pdf-view
   :type 'string)
 
 ;;;###autoload

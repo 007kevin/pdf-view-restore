@@ -8,6 +8,6 @@ To install, add the following:
 (use-package pdf-view-restore
   :after pdf-tools
   :config
-  (pdf-view-restore-setup))
+  (add-hook 'pdf-view-mode-hook 'pdf-view-restore-mode))
 ```
 Once setup, pdf documents will automatically open to their last known page.
