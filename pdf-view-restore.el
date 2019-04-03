@@ -69,7 +69,7 @@
   "Return restore page."
   (let* ((alist (pdf-view-restore-unserialize))
          (key (pdf-view-restore-key))
-         (val (cadr (assoc key alist))))
+         (val (cdr (assoc key alist))))
     val))
 
 (defun pdf-view-restore-set-page (page)
