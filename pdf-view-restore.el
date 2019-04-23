@@ -49,18 +49,18 @@
   (if (not pdf-view-restore-mode)
       (remove-hook 'pdf-view-after-change-page-hook 'pdf-view-restore-save)
     (pdf-view-restore)
-    (add-hook 'pdf-view-after-change-page-hook 'pdf-view-restore-save)))
+    (add-hook 'pdf-view-after-change-page-hook 'pdf-view-restore-save nil t)))
 
 (defun pdf-view-restore ()
   "Restore page."
-  (when (eq major-mode 'pdf-view-mode)
+  (when (derived-mode-p 'pdf-view-mode)
     ;; This buffer is in pdf-view-mode
     (let ((page (pdf-view-restore-get-page)))
       (when page (pdf-view-goto-page page)))))
 
 (defun pdf-view-restore-save ()
   "Save restore information."
-  (when (eq major-mode 'pdf-view-mode)
+  (when (derived-mode-p 'pdf-view-mode)
     ;; This buffer is in pdf-view-mode
     (let ((page (pdf-view-current-page)))   
       (pdf-view-restore-set-page page))))
