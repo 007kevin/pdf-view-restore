@@ -42,6 +42,16 @@
   :group 'pdf-view
   :type 'string)
 
+(defcustom use-file-base-name-flag "t"
+  "Flag to control whether to use only the base name of file or to use full file path. Defaults to using base name.
+  
+  pdf-view-restore uses this setting to determine what to use as the key to search saved files.
+  If set to t, only the base name is used. This will allow moving files while saving sync information.
+  However, that may cause conflicts if you have many files with the same name. 
+  Setting to nil will use the full path but then you may lose information if you move files."
+  :group 'pdf-view
+  :type 'boolean)
+
 ;;;###autoload
 (define-minor-mode pdf-view-restore-mode
   "Automatically restore last known pdf position"
@@ -81,7 +91,9 @@
 
 (defun pdf-view-restore-key ()
   "Key for storing data is based on filename."
-  (file-name-base buffer-file-name))
+  (if use-file-base-name-flag
+   (file-name-base buffer-file-name)
+   buffer-file-name)
 
 ;;; Serialization
 (defun pdf-view-restore-serialize (data)
