@@ -42,7 +42,7 @@
   :group 'pdf-view
   :type 'string)
 
-(defcustom use-file-base-name-flag "t"
+(defcustom use-file-base-name-flag t
   "Flag to control whether to use only the base name of file or to use full file path. Defaults to using base name.
   
   pdf-view-restore uses this setting to determine what to use as the key to search saved files.
