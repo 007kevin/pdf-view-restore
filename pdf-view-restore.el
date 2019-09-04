@@ -93,7 +93,7 @@
   "Key for storing data is based on filename."
   (if use-file-base-name-flag
    (file-name-base buffer-file-name)
-   buffer-file-name)
+   buffer-file-name))
 
 ;;; Serialization
 (defun pdf-view-restore-serialize (data)
