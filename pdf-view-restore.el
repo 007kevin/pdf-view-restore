@@ -67,13 +67,13 @@
     ;; This buffer is in pdf-view-mode
     (let ((page (pdf-view-restore-get-page))
           (pdf-pages (pdf-info-number-of-pages)))
-      (if (<= page pdf-pages)
-          (pdf-view-goto-page page)
-        (message "Stored page number (%s) in pdf-restore file larger than \
+      (when page
+        (if (<= page pdf-pages)
+            (pdf-view-goto-page page)
+          (message "Stored page number (%s) in pdf-restore file larger than \
 number of pages in document (%s). Entry has been reset to first page."
-                 page
-                 pdf-pages)))))
-
+                   page
+                   pdf-pages))))))
 
 (defun pdf-view-restore-save ()
   "Save restore information."
